@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Dynamic Ajax-Based TinyURL Links Generator</title>
+  <meta name="author" content="Jake Rocheleau">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+</head>
+
+<body>
+	<div id="w">
+		<h1>Enter a URL below and we'll give you the tinyurl!</h1>
+		
+		<center><input type="text" id="url" class="biggie" placeholder="http://"></center>
+		
+		<a href="#" class="submitbtn" id="submitbtn">Shorten URL</a>
+		<img src="images/loader.gif" alt="loader" id="loading">
+		
+		<div id="response"> &nbsp; </div>
+	</div>
+	
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".submitbtn").on("click", function(e){
+		e.preventDefault();
+		var longurl = $("#url").val();
+		var dataurl = "url="+longurl;
+		var resdiv  = $("#response");
+		
+		$(this).css("display", "none");
+		$("#loading").css("display", "block");
+		
+		var xhr = $.ajax({
+    	type: "POST",
+   		url: "ajax.php",
+    	data: dataurl,
+    	success: function(html){
+    		if(html == "Error") {
+    			resdiv.html("Whoops! Looks like this one didn't work.");
+    		} else {
+    			var newc = 'Presto! &rarr; <a href="'+html+'" target="_blank">'+html+'</a>';
+      		resdiv.html(newc);
+      	}
+
+      	$("#submitbtn").css("display", "inline-block");
+      	$("#loading").css("display", "none");
+      	$("#url").val("");
+    	},
+    	error: function(xhr){
+    		resdiv.html(xhr.statusText);
+      	$("#submitbtn").css("display", "inline-block");
+      	$("#loading").css("display", "none");
+    	}
+		}); // end ajax call
+	}); // end submit btn click event
+});
+</script>
+</body>
+</html>
